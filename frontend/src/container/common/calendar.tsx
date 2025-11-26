@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Datepicker from "@/component/common/datepicker";
+import Datepicker from "@/component/common/calendar";
 
 type Range = {
   start: Date | null;
