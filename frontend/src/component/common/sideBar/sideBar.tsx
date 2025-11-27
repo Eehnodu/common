@@ -73,12 +73,12 @@ const AdminSidebar = ({ collapsed }) => {
         </nav>
 
         {/* 로그아웃 */}
-        <div className="px-4 py-4 flex-shrink-0 border-t border-sub1">
+        <div className="px-3 py-3 flex-shrink-0 border-t border-sub1">
           <button
             type="button"
             onClick={handleLogout}
             className="
-              w-full flex items-center gap-3 rounded-md px-3 py-2 text-sm
+              w-full flex items-center gap-3 rounded-md px-2 py-1 text-sm
               font-medium text-sub2 hover:text-white
               bg-transparent hover:bg-main-hover active:bg-main-active
               transition-all duration-200
