@@ -14,7 +14,7 @@ const formatDate = (date: Date | null) => {
   return `${y}-${m}-${d}`;
 };
 
-const DatepickerPage = () => {
+const CalendarPage = () => {
   const [rangeDefault, setRangeDefault] = useState<Range>({
     start: null,
     end: null,
@@ -168,4 +168,4 @@ const DatepickerPage = () => {
   );
 };
 
-export default DatepickerPage;
+export default CalendarPage;

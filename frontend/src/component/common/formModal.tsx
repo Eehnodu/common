@@ -1,12 +1,58 @@
-import { useEffect } from "react";
+import { useEffect, type MouseEvent, type ReactNode } from "react";
 import { X } from "lucide-react";
 import Button from "@/component/common/button";
 
+/**
+ * 모달 크기 타입
+ */
 type Size = "sm" | "md" | "lg";
+
+/**
+ * 헤더 정렬/타입
+ * - center: 가운데 정렬
+ * - left: 왼쪽 정렬
+ * - none: 헤더 영역 숨김
+ */
 type HeaderType = "center" | "left" | "none";
+
+/**
+ * 푸터 버튼 개수 타입
+ * - 0: 없음
+ * - 1: 한 개(주 버튼만)
+ * - 2: 두 개(보조 + 주 버튼)
+ */
 type FooterType = 0 | 1 | 2;
+
+/**
+ * 푸터 버튼 정렬
+ */
 type FooterAlign = "left" | "center" | "right";
 
+/**
+ * FormModal 컴포넌트 Props
+ *
+ * @property open            모달 열림 여부
+ * @property onClose         모달 닫힘 시 호출되는 함수
+ *
+ * @property headerType      헤더 타입(center/left/none)
+ * @property title           제목 텍스트
+ * @property description     설명 텍스트
+ *
+ * @property children        모달 본문 영역에 렌더링할 내용
+ * @property size            모달 전체 크기(sm/md/lg)
+ * @property className       모달 컨테이너 커스텀 클래스
+ * @property bodyClassName   바디 영역 커스텀 클래스
+ *
+ * @property footerType      푸터 버튼 개수 (0/1/2)
+ * @property footerAlign     푸터 버튼 정렬(left/center/right)
+ * @property primaryText     주 버튼 텍스트
+ * @property secondaryText   보조 버튼 텍스트
+ * @property onPrimary       주 버튼 클릭 핸들러
+ * @property onSecondary     보조 버튼 클릭 핸들러
+ *
+ * @property closeOnOverlay  오버레이(배경) 클릭 시 닫을지 여부
+ * @property showCloseIcon   우측 상단 X 아이콘 표시 여부
+ */
 interface FormModalProps {
   open: boolean;
   onClose: () => void;
@@ -17,13 +63,13 @@ interface FormModalProps {
   description?: string;
 
   // body
-  children?: React.ReactNode;
+  children?: ReactNode;
   size?: Size;
   className?: string;
   bodyClassName?: string;
 
   // footer
-  footerType?: FooterType; // 0: 없음, 1: 한 개, 2: 두 개
+  footerType?: FooterType;
   footerAlign?: FooterAlign;
   primaryText?: string;
   secondaryText?: string;
@@ -35,6 +81,32 @@ interface FormModalProps {
   showCloseIcon?: boolean;
 }
 
+/**
+ * 폼/컨텐츠 입력용 모달 컴포넌트
+ *
+ * - 헤더 타입(center/left/none) 선택 가능
+ * - 푸터 버튼 개수(0/1/2) 및 정렬 지정 가능
+ * - ESC / 오버레이 클릭으로 닫기 지원
+ *
+ * @example 기본 사용
+ * ```tsx
+ * <FormModal open={open} onClose={handleClose} title="제목">
+ *   내용...
+ * </FormModal>
+ * ```
+ *
+ * @example 확인/취소 버튼
+ * ```tsx
+ * <FormModal
+ *   open={open}
+ *   onClose={handleClose}
+ *   footerType={2}
+ *   primaryText="저장"
+ *   secondaryText="취소"
+ *   onPrimary={handleSave}
+ * />
+ * ```
+ */
 const FormModal = ({
   open,
   onClose,
@@ -64,7 +136,9 @@ const FormModal = ({
         ? "justify-center"
         : "justify-end";
 
-  // ESC 닫기
+  /**
+   * ESC 키로 모달 닫기
+   */
   useEffect(() => {
     if (!open) return;
 
@@ -85,7 +159,7 @@ const FormModal = ({
     onClose();
   };
 
-  const handleContentClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleContentClick = (e: MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
   };
 
@@ -124,11 +198,10 @@ const FormModal = ({
         {showHeader && (
           <div
             className={`
-      relative flex w-full
-      ${headerType === "none" ? "p-2" : "px-4 py-3 border-b"}
-      ${headerType === "center" ? "items-center text-center" : ""}
-      ${headerType === "left" ? "items-start text-left" : ""}
-    `}
+              relative flex w-full
+              ${headerType === "none" ? "p-2" : "px-4 py-3 border-b"}
+              ${headerAlignClass}
+            `}
           >
             {/* headerType=none이면 title/description 숨김 */}
             {headerType !== "none" && (
@@ -148,9 +221,9 @@ const FormModal = ({
                 type="button"
                 onClick={onClose}
                 className="
-          absolute top-2 right-2
-          p-1 rounded hover:bg-gray-100
-        "
+                  absolute top-2 right-2
+                  p-1 rounded hover:bg-gray-100
+                "
               >
                 <X className="w-4 h-4" />
               </button>

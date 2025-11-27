@@ -1,7 +1,24 @@
 import { useState } from "react";
 
+/**
+ * InputBox 사이즈 타입
+ */
 type Size = "sm" | "md" | "lg";
 
+/**
+ * InputBox 컴포넌트 Props
+ *
+ * @property value        입력된 텍스트 값
+ * @property onChange     값 변경 시 호출되는 콜백
+ * @property placeholder  입력창 placeholder
+ * @property className    래퍼 커스텀 클래스
+ * @property size         입력창 크기 (sm/md/lg)
+ * @property disabled     비활성화 여부
+ * @property success      성공 상태 (border 녹색)
+ * @property error        오류 상태 (border 빨강)
+ * @property leftIcon     왼쪽 아이콘
+ * @property rightIcon    오른쪽 아이콘
+ */
 interface InputBoxProps {
   value?: string;
   onChange?: (value: string) => void;
@@ -15,6 +32,29 @@ interface InputBoxProps {
   rightIcon?: React.ReactNode;
 }
 
+/**
+ * 재사용 가능한 InputBox 컴포넌트
+ *
+ * - 상태(success/error)에 따라 border 색상 변경
+ * - left/right 아이콘 삽입 가능
+ * - 크기 조절(sm/md/lg)
+ *
+ * @example 기본 사용
+ * ```tsx
+ * <InputBox value={text} onChange={setText} />
+ * ```
+ *
+ * @example 아이콘 포함
+ * ```tsx
+ * <InputBox leftIcon={<Search />} placeholder="검색" />
+ * ```
+ *
+ * @example 상태 표시
+ * ```tsx
+ * <InputBox success value="완료" />
+ * <InputBox error value="오류" />
+ * ```
+ */
 const InputBox = ({
   value = "",
   onChange,
@@ -27,8 +67,14 @@ const InputBox = ({
   leftIcon,
   rightIcon,
 }: InputBoxProps) => {
+  /**
+   * focus 상태를 위한 내부 state
+   */
   const [focused, setFocused] = useState(false);
 
+  /**
+   * 사이즈별 스타일 맵
+   */
   const sizeStyles = {
     sm: {
       wrapper: "h-8 text-xs px-2 gap-1",
@@ -47,11 +93,13 @@ const InputBox = ({
     },
   }[size];
 
-  // 상태별 border 색상
+  /**
+   * border 색상 상태 계산
+   */
   const borderColor = (() => {
     if (error) return "border-red-500";
     if (success) return "border-green-500";
-    if (focused) return "border-main"; // 클릭 시
+    if (focused) return "border-main";
     return "border-gray-300 hover:border-main";
   })();
 

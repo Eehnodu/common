@@ -2,20 +2,38 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Button from "@/component/common/button";
 
+/**
+ * 날짜 범위 값 타입
+ *
+ * - start 또는 end가 null이면 미선택 상태
+ * - Datepicker 내외부의 value 타입으로 사용됨
+ */
 type RangeValue = {
   start: Date | null;
   end: Date | null;
 };
 
+/** 캘린더 팝업이 열릴 위치 */
 type Position = "top" | "bottom" | "left" | "right";
+
+/** Datepicker 크기 사이즈 */
 type Size = "sm" | "md" | "lg";
 
-interface DatepickerProps {
+/**
+ * Datepicker 컴포넌트 Props
+ *
+ * @property value      현재 선택된 날짜 범위
+ * @property onChange   날짜 범위가 확정되었을 때 호출되는 콜백
+ * @property className  외부 래퍼 커스텀 클래스
+ * @property position   팝업이 열리는 방향
+ * @property size       Datepicker 및 캘린더의 크기
+ */
+interface CalendarProps {
   value?: RangeValue;
   onChange?: (value: RangeValue) => void;
   className?: string;
-  position?: Position; // 팝업 위치
-  size?: Size; // 크기
+  position?: Position;
+  size?: Size;
 }
 
 const months = [
@@ -34,23 +52,52 @@ const months = [
 ];
 const days = ["일", "월", "화", "수", "목", "금", "토"];
 
-const Datepicker = ({
+/**
+ * Range Datepicker 컴포넌트
+ *
+ * - 한 컴포넌트 안에서 시작일(start)과 종료일(end)을 선택
+ * - 팝업 위치 조절 (top / bottom / left / right)
+ * - 크기 조절 (sm / md / lg)
+ *
+ * @example 기본 사용
+ * ```tsx
+ * <Datepicker
+ *   value={range}
+ *   onChange={(v) => setRange(v)}
+ * />
+ * ```
+ *
+ * @example 위치 조절
+ * ```tsx
+ * <Datepicker position="top" />
+ * ```
+ *
+ * @example 크기 조절
+ * ```tsx
+ * <Datepicker size="lg" />
+ * ```
+ */
+const Calendar = ({
   value,
   onChange,
   className = "",
   position = "bottom",
   size = "md",
-}: DatepickerProps) => {
+}: CalendarProps) => {
   const [open, setOpen] = useState(false);
 
   const start = value?.start ?? null;
   const end = value?.end ?? null;
 
+  // 초기 보이는 월은 start 기준, 없으면 오늘 기준
   const now = start || new Date();
   const [viewYear, setViewYear] = useState(now.getFullYear());
   const [viewMonth, setViewMonth] = useState(now.getMonth());
 
-  // 캘린더 안에서만 사용할 임시 선택 값 (확인 눌러야 밖으로 나감)
+  /**
+   * draft: 캘린더 UI 안에서만 사용하는 임시 선택 상태
+   * - 사용자 확인을 누르기 전까지 외부 value에는 반영되지 않음
+   */
   const [draft, setDraft] = useState<RangeValue>({
     start,
     end,
@@ -59,7 +106,9 @@ const Datepicker = ({
   const draftStart = draft.start;
   const draftEnd = draft.end;
 
-  // ------- size 스타일 맵 -------
+  /**
+   * 사이즈에 따른 스타일 맵
+   */
   const sizeStyles = {
     sm: {
       input: "min-w-[220px] h-8 text-xs",
@@ -84,6 +133,7 @@ const Datepicker = ({
     },
   }[size];
 
+  /** 이전 달로 이동 */
   const prevMonth = () => {
     let y = viewYear;
     let m = viewMonth - 1;
@@ -95,6 +145,7 @@ const Datepicker = ({
     setViewMonth(m);
   };
 
+  /** 다음 달로 이동 */
   const nextMonth = () => {
     let y = viewYear;
     let m = viewMonth + 1;
@@ -106,15 +157,22 @@ const Datepicker = ({
     setViewMonth(m);
   };
 
+  /**
+   * 현재 연/월 기준으로 달력에 표시할 날짜 배열 생성
+   *
+   * @returns Date 또는 빈 칸(null)
+   */
   const getDates = () => {
     const first = new Date(viewYear, viewMonth, 1);
     const last = new Date(viewYear, viewMonth + 1, 0);
 
     const dates: (Date | null)[] = [];
 
+    // 달력 첫 주 앞부분 빈칸
     for (let i = 0; i < first.getDay(); i += 1) {
       dates.push(null);
     }
+    // 날짜 채우기
     for (let d = 1; d <= last.getDate(); d += 1) {
       dates.push(new Date(viewYear, viewMonth, d));
     }
@@ -123,80 +181,80 @@ const Datepicker = ({
 
   const dates = getDates();
 
-  // 날짜 클릭은 draft만 수정, onChange는 안 부름
+  /**
+   * 날짜 클릭 처리 (draft 상태만 변경)
+   */
   const handlePick = (picked: Date) => {
-    // start 없음 혹은 start/end 둘 다 이미 선택된 상태 → 새로 시작
     if (!draftStart || (draftStart && draftEnd)) {
       setDraft({ start: picked, end: null });
       return;
     }
 
-    // start만 있고 end 없음
+    // start만 있는 상태
     if (picked < draftStart) {
-      // start보다 이전 날짜 선택 → start를 새로 지정
       setDraft({ start: picked, end: null });
     } else {
-      // 정상적으로 end 선택
       setDraft({ start: draftStart, end: picked });
     }
   };
 
+  /** 범위 사이 날짜인지 체크 */
   const isInRange = (date: Date) => {
     if (!draftStart || !draftEnd) return false;
     return date >= draftStart && date <= draftEnd;
   };
 
+  /** 날짜가 같은지 체크 */
   const isSameDay = (a: Date | null, b: Date | null) => {
     if (!a || !b) return false;
     return a.toDateString() === b.toDateString();
   };
 
+  /** yyyy-mm-dd 포맷 */
   const format = (d: Date) =>
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
       2,
       "0"
     )}-${String(d.getDate()).padStart(2, "0")}`;
 
+  /** 날짜 또는 placeholder */
   const formatOrPlaceholder = (d: Date | null) =>
     d ? format(d) : "yyyy-mm-dd";
 
-  // 인풋에는 확정된 value 기준으로만 보여줌 (draft 아님)
+  /** 인풋 박스에 표시될 텍스트 */
   const displayText = () =>
     `${formatOrPlaceholder(start)} ~ ${formatOrPlaceholder(end)}`;
 
-  // 팝업 위치
+  /** 팝업 위치 클래스 */
   const getPositionClass = () => {
-    if (position === "top") {
-      return "bottom-full mb-2 left-0";
-    }
-    if (position === "left") {
-      return "right-full mr-2 top-0";
-    }
-    if (position === "right") {
-      return "left-full ml-2 top-0";
-    }
-    // bottom (default)
+    if (position === "top") return "bottom-full mb-2 left-0";
+    if (position === "left") return "right-full mr-2 top-0";
+    if (position === "right") return "left-full ml-2 top-0";
     return "top-full mt-2 left-0";
   };
 
   const popupPositionClass = getPositionClass();
 
+  /**
+   * 팝업 열고 닫기
+   * - 열릴 때 draft를 현재 값으로 초기화함
+   */
   const handleToggleOpen = () => {
     const nextOpen = !open;
-    // 열릴 때마다 draft를 현재 value 기준으로 리셋
     if (!open && nextOpen) {
       setDraft({ start, end });
     }
     setOpen(nextOpen);
   };
 
+  /** 선택 취소 (전부 초기화) */
   const handleCancel = () => {
-    // 값 지우고 닫기
     onChange?.({ start: null, end: null });
     setDraft({ start: null, end: null });
     setOpen(false);
   };
 
+  /** 선택 확정 */
   const handleConfirm = () => {
     onChange?.(draft);
     setOpen(false);
@@ -274,7 +332,6 @@ const Datepicker = ({
               } else if (inRange) {
                 classes += " bg-main/20";
               } else {
-                // 범위 밖의 일반 날짜만 hover 컬러 적용
                 classes += " hover:bg-main/10";
               }
 
@@ -291,13 +348,13 @@ const Datepicker = ({
             })}
           </div>
 
-          {/* 취소 / 확인 버튼 */}
+          {/* 취소 / 확인 */}
           <div className="flex justify-end gap-2 mt-3 pt-2 border-t">
             <Button variant="sub2" size="sm" onClick={handleCancel}>
-              <span className={`${sizeStyles.textSize}`}>취소</span>
+              <span className={sizeStyles.textSize}>취소</span>
             </Button>
             <Button variant="main" size="sm" onClick={handleConfirm}>
-              <span className={`${sizeStyles.textSize}`}>확인</span>
+              <span className={sizeStyles.textSize}>확인</span>
             </Button>
           </div>
         </div>
@@ -306,4 +363,4 @@ const Datepicker = ({
   );
 };
 
-export default Datepicker;
+export default Calendar;

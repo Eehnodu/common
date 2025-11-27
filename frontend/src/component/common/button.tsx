@@ -1,14 +1,41 @@
 import { ButtonHTMLAttributes, ReactNode } from "react";
 
+/**
+ * Button 컴포넌트에서 사용할 속성 타입
+ */
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  /** 버튼 내부에 표시될 콘텐츠 */
   children: ReactNode;
+
+  /** 버튼 스타일 종류 (main / sub1 / sub2) */
   variant?: "main" | "sub1" | "sub2";
+
+  /** 버튼 사이즈 (sm / md / lg) */
   size?: "sm" | "md" | "lg";
+
+  /** 텍스트 왼쪽에 표시할 아이콘 */
   leftIcon?: ReactNode;
+
+  /** 텍스트 오른쪽에 표시할 아이콘 */
   rightIcon?: ReactNode;
+
+  /** 추가 커스텀 클래스 */
   className?: string;
 }
 
+/**
+ * 재사용 가능한 기본 Button 컴포넌트
+ *
+ * @example
+ * ```tsx
+ * <Button variant="main" size="md">저장하기</Button>
+ * ```
+ *
+ * @example
+ * ```tsx
+ * <Button leftIcon={<IconPlus />}>추가</Button>
+ * ```
+ */
 const Button = ({
   children,
   variant = "main",

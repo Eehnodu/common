@@ -1,9 +1,40 @@
-import { useEffect } from "react";
+import { useEffect, type MouseEvent } from "react";
 import Button from "@/component/common/button";
 
+/**
+ * 모달 크기 타입
+ */
 type Size = "sm" | "md" | "lg";
+
+/**
+ * 버튼 개수 타입
+ * - 0: 버튼 없음
+ * - 1: 기본 버튼 한 개
+ * - 2: 보조 + 기본 버튼 두 개
+ */
 type ButtonCount = 0 | 1 | 2;
 
+/**
+ * 기본 알럿/확인용 Modal 컴포넌트 Props
+ *
+ * @property open            모달 열림 여부
+ * @property onClose         모달 닫기 핸들러
+ *
+ * @property title           제목(필수)
+ * @property description     설명(선택)
+ *
+ * @property size            모달 크기(sm/md/lg)
+ *
+ * @property buttonCount     버튼 개수 (0/1/2)
+ * @property primaryText     기본(확인) 버튼 텍스트
+ * @property secondaryText   보조(취소) 버튼 텍스트
+ * @property onPrimary       기본 버튼 클릭 시 호출
+ * @property onSecondary     보조 버튼 클릭 시 호출
+ *
+ * @property closeOnOverlay  오버레이 클릭 시 닫을지 여부
+ * @property className       모달 컨테이너에 추가할 클래스
+ * @property bodyClassName   내용 래퍼에 추가할 클래스
+ */
 interface ModalProps {
   open: boolean;
   onClose: () => void;
@@ -13,7 +44,7 @@ interface ModalProps {
 
   size?: Size;
 
-  buttonCount?: ButtonCount; // 0: 없음, 1: 한 개, 2: 두 개
+  buttonCount?: ButtonCount;
   primaryText?: string;
   secondaryText?: string;
   onPrimary?: () => void;
@@ -21,9 +52,37 @@ interface ModalProps {
 
   closeOnOverlay?: boolean;
   className?: string;
-  bodyClassName?: string; // 전체 내용 래퍼에 추가 스타일 주고 싶을 때
+  bodyClassName?: string;
 }
 
+/**
+ * 단순 확인/취소 타입의 기본 Modal 컴포넌트
+ *
+ * - 제목 + 설명 + 버튼 한 줄 구성
+ * - ESC / 오버레이 클릭으로 닫기 지원
+ * - 버튼 개수(0/1/2) 및 텍스트 커스터마이징 가능
+ *
+ * @example 기본 사용
+ * ```tsx
+ * <Modal
+ *   open={open}
+ *   onClose={handleClose}
+ *   title="저장하시겠습니까?"
+ *   description="변경 사항이 적용됩니다."
+ * />
+ * ```
+ *
+ * @example 버튼 한 개만
+ * ```tsx
+ * <Modal
+ *   open={open}
+ *   onClose={handleClose}
+ *   title="완료되었습니다."
+ *   buttonCount={1}
+ *   primaryText="확인"
+ * />
+ * ```
+ */
 const Modal = ({
   open,
   onClose,
@@ -46,6 +105,9 @@ const Modal = ({
         ? "min-w-80 max-w-[32rem]"
         : "min-w-64 max-w-80";
 
+  /**
+   * ESC 키로 모달 닫기
+   */
   useEffect(() => {
     if (!open) return;
 
@@ -66,7 +128,7 @@ const Modal = ({
     onClose();
   };
 
-  const handleContentClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleContentClick = (e: MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
   };
 

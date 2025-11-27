@@ -1,14 +1,39 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 
+/**
+ * SelectBox의 옵션 타입
+ *
+ * @property label 화면에 표시될 텍스트
+ * @property value 실제 값 (string | number)
+ */
 type Option = {
   label: string;
   value: string | number;
 };
 
+/**
+ * SelectBox 크기 타입
+ */
 type Size = "sm" | "md" | "lg";
+
+/**
+ * 옵션 리스트가 열리는 방향
+ */
 type Position = "top" | "bottom";
 
+/**
+ * SelectBox 컴포넌트 Props
+ *
+ * @property value        선택된 값
+ * @property onChange     선택 시 호출되는 콜백
+ * @property options      표시할 옵션 배열
+ * @property placeholder  값이 없을 때 표시되는 텍스트
+ * @property className    래퍼 커스텀 클래스
+ * @property size         크기(sm/md/lg)
+ * @property position     팝업 위치(top/bottom)
+ * @property disabled     비활성화 여부
+ */
 interface SelectBoxProps {
   value?: string | number | null;
   onChange?: (value: string | number) => void;
@@ -20,6 +45,36 @@ interface SelectBoxProps {
   disabled?: boolean;
 }
 
+/**
+ * 재사용 가능한 SelectBox (커스텀 드롭다운)
+ *
+ * - 옵션 리스트를 클릭하면 value/onChange 방식으로 값 반환
+ * - 외부 클릭 감지하여 자동 닫힘
+ * - 팝업이 열리는 방향 지정 가능 (top/bottom)
+ * - 크기 옵션 제공 (sm/md/lg)
+ *
+ * @example 기본 사용
+ * ```tsx
+ * <SelectBox
+ *   value={selected}
+ *   onChange={(v) => setSelected(v)}
+ *   options={[
+ *     { label: "Option 1", value: 1 },
+ *     { label: "Option 2", value: 2 },
+ *   ]}
+ * />
+ * ```
+ *
+ * @example 위로 펼쳐지는 SelectBox
+ * ```tsx
+ * <SelectBox position="top" />
+ * ```
+ *
+ * @example 큰 사이즈
+ * ```tsx
+ * <SelectBox size="lg" />
+ * ```
+ */
 const SelectBox = ({
   value,
   onChange,
@@ -33,7 +88,9 @@ const SelectBox = ({
   const [open, setOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement | null>(null);
 
-  // ▼ size 스타일
+  /**
+   * 사이즈별 스타일 맵
+   */
   const sizeStyles = {
     sm: {
       input: "h-8 text-xs px-2",
@@ -55,13 +112,16 @@ const SelectBox = ({
     },
   }[size];
 
+  /** 선택된 옵션 */
   const selectedOption = options.find((o) => o.value === value);
 
-  // ▼ 팝업 위치
+  /** 팝업 위치 */
   const popupPosition =
     position === "top" ? "bottom-full mb-1 left-0" : "top-full mt-1 left-0";
 
-  // ▼ 외부 클릭 → 닫기
+  /**
+   * 외부 클릭 → SelectBox 닫기
+   */
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (boxRef.current && !boxRef.current.contains(e.target as Node)) {
@@ -72,6 +132,9 @@ const SelectBox = ({
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  /**
+   * 옵션 선택 처리
+   */
   const handleSelect = (val: string | number) => {
     onChange?.(val);
     setOpen(false);
@@ -79,15 +142,15 @@ const SelectBox = ({
 
   return (
     <div ref={boxRef} className={`relative inline-block w-full ${className}`}>
-      {/* Input */}
+      {/* Input 영역 */}
       <button
         type="button"
         onClick={() => !disabled && setOpen(!open)}
         disabled={disabled}
         className={`border rounded-md bg-white w-full flex items-center justify-between hover:bg-gray-50 whitespace-nowrap
-      ${sizeStyles.input}
-      ${disabled ? "opacity-40 cursor-not-allowed" : ""}
-    `}
+          ${sizeStyles.input}
+          ${disabled ? "opacity-40 cursor-not-allowed" : ""}
+        `}
       >
         <span>{selectedOption ? selectedOption.label : placeholder}</span>
 
@@ -98,15 +161,15 @@ const SelectBox = ({
         />
       </button>
 
-      {/* Option List */}
+      {/* 옵션 리스트 */}
       {open && (
         <div
           className={`
-        absolute border bg-white shadow-lg rounded-md z-10
-        min-w-full
-        ${sizeStyles.list}
-        ${popupPosition}
-      `}
+            absolute border bg-white shadow-lg rounded-md z-10
+            min-w-full
+            ${sizeStyles.list}
+            ${popupPosition}
+          `}
         >
           {options.map((opt) => (
             <button

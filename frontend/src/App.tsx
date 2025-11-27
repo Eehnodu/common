@@ -13,6 +13,8 @@ import CheckboxPage from "./container/common/checkbox";
 import FormModalPage from "./container/common/formModal";
 import ModalPage from "./container/common/modal";
 import TablePage from "./container/common/table";
+import AlertPage from "./container/common/alert";
+import ToastPage from "./container/common/toast";
 
 function App() {
   const queryClient = new QueryClient();
@@ -34,6 +36,8 @@ function App() {
             <Route path="/formmodal" element={<FormModalPage />} />
             <Route path="/modal" element={<ModalPage />} />
             <Route path="/table" element={<TablePage />} />
+            <Route path="/alert" element={<AlertPage />} />
+            <Route path="/toast" element={<ToastPage />} />
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>

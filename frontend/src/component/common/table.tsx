@@ -1,7 +1,25 @@
-type Size = "sm" | "md" | "lg";
+import TableHeader from "./tableHeader";
+import TableBody from "./tableBody";
 
-type Align = "left" | "center" | "right";
+/**
+ * 테이블 행 높이 및 텍스트 크기 타입
+ */
+export type Size = "sm" | "md" | "lg";
 
+/**
+ * 열 정렬 방식 타입
+ */
+export type Align = "left" | "center" | "right";
+
+/**
+ * Table 열(Column) 정의
+ *
+ * @property key     행 데이터에서 읽을 key
+ * @property header  테이블 헤더에 표시될 텍스트
+ * @property width   개별 컬럼 가로 너비 (예: "150px" 또는 "20%")
+ * @property align   정렬(left/center/right)
+ * @property render  셀 커스텀 렌더 함수(row → ReactNode)
+ */
 export interface Column {
   key: string;
   header: string;
@@ -10,6 +28,16 @@ export interface Column {
   render?: (row: any) => React.ReactNode;
 }
 
+/**
+ * Table 컴포넌트 Props
+ *
+ * @property columns    테이블 컬럼 설정 배열
+ * @property data       테이블에 표시할 데이터
+ * @property size       행 크기(sm/md/lg)
+ * @property striped    홀/짝 줄 배경색 적용 여부
+ * @property className  외부 wrapper 커스텀 클래스
+ * @property onRowClick 행 클릭 시 호출되는 콜백(row 전달)
+ */
 interface TableProps {
   columns: Column[];
   data: any[];
@@ -19,12 +47,44 @@ interface TableProps {
   onRowClick?: (row: any) => void;
 }
 
-const sizeStyles = {
+/**
+ * 테이블 행 사이즈별 클래스
+ */
+const sizeStyles: Record<Size, string> = {
   sm: "text-xs h-8",
   md: "text-sm h-10",
   lg: "text-base h-12",
 };
 
+/**
+ * 재사용 가능한 Table 컴포넌트
+ *
+ * - columns 배열을 기반으로 header/body 자동 구성
+ * - render 함수로 셀 단위 커스텀 UI 가능
+ * - striped 옵션으로 줄무늬 테이블 표현
+ * - row 클릭 핸들링(onRowClick) 지원
+ *
+ * @example 기본 사용
+ * ```tsx
+ * const columns = [
+ *   { key: "name", header: "이름" },
+ *   { key: "age", header: "나이", align: "center" },
+ * ];
+ *
+ * <Table columns={columns} data={rows} />
+ * ```
+ *
+ * @example 커스텀 렌더링
+ * ```tsx
+ * const columns = [
+ *   {
+ *     key: "status",
+ *     header: "상태",
+ *     render: (row) => <StatusTag type={row.status} />,
+ *   },
+ * ];
+ * ```
+ */
 const Table = ({
   columns,
   data,
@@ -38,79 +98,17 @@ const Table = ({
   return (
     <div className={`w-full overflow-x-auto ${className}`}>
       <table className="w-full border-collapse rounded-md overflow-hidden">
-        {/* 헤더 */}
-        <thead className="bg-gray-100 border-b border-gray-300">
-          <tr className={rowSizeClass}>
-            {columns.map((col) => (
-              <th
-                key={col.key}
-                className={`
-                  px-3 py-2 font-medium text-gray-700
-                  border-b border-gray-200
-                  ${getAlignClass(col.align)}
-                `}
-                style={col.width ? { width: col.width } : undefined}
-              >
-                {col.header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-
-        {/* 바디 */}
-        <tbody>
-          {data.map((row, index) => {
-            const stripedClass = striped && index % 2 === 1 ? "bg-gray-50" : "";
-
-            const clickableClass = onRowClick
-              ? "cursor-pointer hover:bg-main/10"
-              : "hover:bg-main/10";
-
-            return (
-              <tr
-                key={index}
-                className={`${rowSizeClass} ${stripedClass} ${clickableClass}`}
-                onClick={() => {
-                  if (onRowClick) onRowClick(row);
-                }}
-              >
-                {columns.map((col) => (
-                  <td
-                    key={col.key}
-                    className={`
-                      px-3 py-2 border-b border-gray-200
-                      ${getAlignClass(col.align)}
-                    `}
-                  >
-                    {col.render
-                      ? col.render(row)
-                      : ((row as any)[col.key] ?? "")}
-                  </td>
-                ))}
-              </tr>
-            );
-          })}
-
-          {data.length === 0 && (
-            <tr>
-              <td
-                colSpan={columns.length}
-                className="px-3 py-4 text-center text-xs text-gray-500 border-b border-gray-200"
-              >
-                데이터가 없습니다.
-              </td>
-            </tr>
-          )}
-        </tbody>
+        <TableHeader columns={columns} rowSizeClass={rowSizeClass} />
+        <TableBody
+          columns={columns}
+          data={data}
+          rowSizeClass={rowSizeClass}
+          striped={striped}
+          onRowClick={onRowClick}
+        />
       </table>
     </div>
   );
-};
-
-const getAlignClass = (align?: Align) => {
-  if (align === "center") return "text-center";
-  if (align === "right") return "text-right";
-  return "text-left";
 };
 
 export default Table;
