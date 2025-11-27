@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import Button from "@/component/common/button";
+import Button from "@/component/common/form/button";
 
 /**
  * 날짜 범위 값 타입

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Toast from "@/component/common/toast";
-import Button from "@/component/common/button";
+import Toast from "@/component/common/feedback/toast";
+import Button from "@/component/common/form/button";
 
 const ToastPage = () => {
   const [toast, setToast] = useState({

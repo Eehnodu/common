@@ -1,6 +1,6 @@
 import { useState } from "react";
-import FormModal from "@/component/common/formModal";
-import Button from "@/component/common/button";
+import FormModal from "@/component/common/feedback/formModal";
+import Button from "@/component/common/form/button";
 
 const FormModalPage = () => {
   // header 데모

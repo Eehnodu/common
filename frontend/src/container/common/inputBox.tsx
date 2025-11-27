@@ -1,5 +1,5 @@
 import { useState } from "react";
-import InputBox from "@/component/common/inputbox";
+import InputBox from "@/component/common/form/inputbox";
 import { Search, X } from "lucide-react";
 
 const InputBoxPage = () => {

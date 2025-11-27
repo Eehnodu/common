@@ -1,5 +1,5 @@
 import { useEffect, type MouseEvent } from "react";
-import Button from "@/component/common/button";
+import Button from "@/component/common/form/button";
 
 /**
  * 모달 크기 타입

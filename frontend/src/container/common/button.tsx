@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Button from "@/component/common/button";
+import Button from "@/component/common/form/button";
 import { Home, ArrowRight } from "lucide-react";
 
 const sizes = ["sm", "md", "lg"] as const;

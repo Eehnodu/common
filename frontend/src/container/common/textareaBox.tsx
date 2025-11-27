@@ -1,5 +1,5 @@
 import { useState } from "react";
-import TextareaBox from "@/component/common/textareaBox";
+import TextareaBox from "@/component/common/form/textareaBox";
 
 const TextareaBoxPage = () => {
   const [sm, setSm] = useState("");

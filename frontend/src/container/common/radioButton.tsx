@@ -1,5 +1,5 @@
 import { useState } from "react";
-import RadioButton from "@/component/common/radioButton";
+import RadioButton from "@/component/common/form/radioButton";
 
 const RadioButtonPage = () => {
   const [valueSm, setValueSm] = useState("a");

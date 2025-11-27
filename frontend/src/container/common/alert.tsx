@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Alert from "@/component/common/alert";
+import Alert from "@/component/common/feedback/alert";
 
 const AlertPage = () => {
   const [visible, setVisible] = useState(true);

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Checkbox from "@/component/common/checkbox";
+import Checkbox from "@/component/common/form/checkbox";
 
 const CheckboxPage = () => {
   const [sm, setSm] = useState(false);

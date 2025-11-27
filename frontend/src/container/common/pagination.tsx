@@ -26,7 +26,7 @@ const PaginationPage = () => {
       <section className="flex flex-col mx-auto gap-3 items-center justify-center border border-gray-400 rounded-md p-4">
         <h2 className="text-xl font-semibold">사이즈별</h2>
 
-        <div className="flex flex-col gap-4 items-center gap-4">
+        <div className="flex flex-col gap-4 items-center">
           <div className="flex flex-col gap-1">
             <span className="text-base text-black">SM</span>
             <Pagination

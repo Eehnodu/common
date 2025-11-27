@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Modal from "@/component/common/modal";
-import Button from "@/component/common/button";
+import Modal from "@/component/common/feedback/modal";
+import Button from "@/component/common/form/button";
 
 type Size = "sm" | "md" | "lg";
 

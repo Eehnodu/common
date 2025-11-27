@@ -1,6 +1,6 @@
 import { useEffect, type MouseEvent, type ReactNode } from "react";
 import { X } from "lucide-react";
-import Button from "@/component/common/button";
+import Button from "@/component/common/form/button";
 
 /**
  * 모달 크기 타입

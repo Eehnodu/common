@@ -1,4 +1,4 @@
-import Toggle from "@/component/common/toggle";
+import Toggle from "@/component/common/form/toggle";
 
 const sizes = ["sm", "md", "lg"] as const;
 

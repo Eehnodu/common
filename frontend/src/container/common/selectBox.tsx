@@ -1,5 +1,5 @@
 import { useState } from "react";
-import SelectBox from "@/component/common/selectBox";
+import SelectBox from "@/component/common/form/selectBox";
 
 const options = [
   { label: "옵션 1", value: "1" },
