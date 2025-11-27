@@ -8,7 +8,7 @@ import Button from "@/component/common/form/button";
  * - start 또는 end가 null이면 미선택 상태
  * - Datepicker 내외부의 value 타입으로 사용됨
  */
-type RangeValue = {
+export type RangeValue = {
   start: Date | null;
   end: Date | null;
 };

@@ -1,23 +1,22 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-/**
- * Pagination 컴포넌트 크기 타입
- */
 type PaginationSize = "sm" | "md";
 
 /**
  * Pagination 컴포넌트 Props
  *
  * @property page          현재 페이지 번호 (1-based)
- * @property totalPages    전체 페이지 수
+ * @property total         전체 아이템 개수
+ * @property pageSize      페이지당 아이템 개수 (기본 10)
  * @property onChange      페이지 변경 시 호출되는 콜백
  * @property visibleCount  한 번에 보여줄 페이지 버튼 개수 (기본 5)
  * @property size          버튼 크기 (sm / md)
- * @property className     외부 래퍼 커스텀 클래스
+ * @property className     외부 클래스
  */
 interface Props {
   page: number; // 1-based
-  totalPages: number;
+  total: number; // 총 아이템 개수
+  pageSize?: number;
   onChange: (page: number) => void;
   visibleCount?: number;
   size?: PaginationSize;
@@ -25,41 +24,36 @@ interface Props {
 }
 
 /**
- * 범위 기반 Pagination 컴포넌트
+ * Pagination 컴포넌트
  *
- * - 페이지를 일정 묶음(visibleCount) 단위로 나누어 보여줌
- * - Prev / Next 버튼은 묶음(그룹) 단위 이동
- * - 현재 페이지 강조 표시
+ * - total(총 개수) + pageSize 로 전체 페이지 수 계산
+ * - 페이지를 visibleCount 단위로 묶어서 표시
+ * - Prev / Next 는 그룹 단위 이동
  *
- * @example 기본 사용
+ * @example
  * ```tsx
  * <Pagination
- *   page={page}
- *   totalPages={20}
+ *   page={1}
+ *   total={123}
+ *   pageSize={10}
  *   onChange={(p) => setPage(p)}
  * />
- * ```
- *
- * @example 3개씩 보여주기
- * ```tsx
- * <Pagination visibleCount={3} />
- * ```
- *
- * @example 작은 사이즈
- * ```tsx
- * <Pagination size="sm" />
  * ```
  */
 const Pagination = ({
   page,
-  totalPages,
+  total,
   onChange,
   visibleCount = 5,
+  pageSize = 10,
   size = "md",
   className = "",
 }: Props) => {
-  // totalPages가 0 이하라면 Pagination 표시할 필요 없음
-  if (totalPages <= 0) return null;
+  /** total이 0 이하라면 페이징 표시할 필요 없음 */
+  if (total <= 0) return null;
+
+  /** 전체 페이지 수 = 총 개수 / 페이지당 개수 */
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   /**
    * 실제 보여줄 페이지 버튼 수
@@ -67,19 +61,20 @@ const Pagination = ({
    */
   const count = Math.max(1, Math.min(visibleCount, totalPages));
 
-  /** 안전하게 범위(1~totalPages) 안으로 보정된 현재 페이지 */
+  /** 안전하게 1~totalPages 범위 안에 보정된 현재 페이지 */
   const currentPage = Math.min(Math.max(1, page), totalPages);
 
   /**
-   * 현재 페이지가 속한 묶음(group)의 시작/끝 계산
-   * 예: 1~5, 6~10, 11~15 ...
+   * 현재 페이지가 속한 묶음의 시작/끝
+   * 예: 1~5, 6~10, 11~15
    */
   const start = Math.floor((currentPage - 1) / count) * count + 1;
   const end = Math.min(totalPages, start + count - 1);
 
-  /** 현재 묶음에 표시할 페이지 번호 배열 */
+  /** 현재 그룹에 표시할 페이지 번호 배열 */
   const pages = Array.from({ length: end - start + 1 }, (_, i) => start + i);
 
+  /** 공통 스타일 */
   const base =
     "inline-flex items-center justify-center rounded-md border text-sm transition";
   const sizeClass = size === "sm" ? "h-7 min-w-7 px-1" : "h-8 min-w-8 px-2";
@@ -90,7 +85,7 @@ const Pagination = ({
 
   /**
    * 이전 묶음으로 이동
-   * - 현재 그룹의 첫 페이지(start) 기준으로 이전 묶음 이동
+   * - start가 1이면 첫 그룹이므로 이동 불가
    */
   const handlePrevGroup = () => {
     if (start === 1) return;
@@ -99,14 +94,18 @@ const Pagination = ({
 
   /**
    * 다음 묶음으로 이동
-   * - 다음 묶음의 첫 페이지로 이동
+   * - 다음 그룹의 첫 페이지로 이동
    */
   const handleNextGroup = () => {
     if (end === totalPages) return;
     onChange(Math.min(totalPages, start + count));
   };
 
-  /** 특정 페이지로 이동 */
+  /**
+   * 특정 페이지로 이동
+   *
+   * @param p 이동할 페이지 번호
+   */
   const handleClickPage = (p: number) => {
     if (p !== currentPage) {
       onChange(p);
@@ -131,7 +130,7 @@ const Pagination = ({
         <ChevronLeft className={iconSize} />
       </button>
 
-      {/* 현재 묶음 페이지들 */}
+      {/* 페이지 숫자 버튼 */}
       {pages.map((p) => {
         const isActive = p === currentPage;
         return (
