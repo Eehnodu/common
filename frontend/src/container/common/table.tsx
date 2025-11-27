@@ -1,5 +1,5 @@
 // tablePage.tsx
-import Table, { Column } from "@/component/common/table";
+import Table, { Column } from "@/component/common/table/table";
 
 interface RowData {
   name: string;
