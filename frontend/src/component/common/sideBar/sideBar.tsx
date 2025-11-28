@@ -19,7 +19,6 @@ const AdminSidebar = ({ collapsed }) => {
   return (
     <aside
       className={`
-        hidden lg:flex
         h-screen flex-col overflow-hidden border-r transition-all duration-300 ease-in-out
         bg-main text-sub2 border-sub1
         ${collapsed ? "w-0 border-0" : "w-64"}

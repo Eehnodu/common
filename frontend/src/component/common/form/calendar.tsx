@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Calendar as CalendarIcon,
+} from "lucide-react";
 import Button from "@/component/common/form/button";
 
 /**
@@ -19,21 +23,55 @@ type Position = "top" | "bottom" | "left" | "right";
 /** Datepicker 크기 사이즈 */
 type Size = "sm" | "md" | "lg";
 
-/**
- * Datepicker 컴포넌트 Props
- *
- * @property value      현재 선택된 날짜 범위
- * @property onChange   날짜 범위가 확정되었을 때 호출되는 콜백
- * @property className  외부 래퍼 커스텀 클래스
- * @property position   팝업이 열리는 방향
- * @property size       Datepicker 및 캘린더의 크기
- */
 interface CalendarProps {
+  /**
+   * 현재 선택된 날짜 범위
+   *
+   * - `{ start: Date | null, end: Date | null }`
+   * - 둘 다 null이면 선택되지 않은 상태
+   */
   value?: RangeValue;
+
+  /**
+   * 날짜 범위가 확정되었을 때 호출되는 콜백
+   *
+   * - "확인" 버튼을 눌렀을 때만 호출됨
+   * - "취소" 시에는 `{ start: null, end: null }`로 초기화 콜백 호출
+   */
   onChange?: (value: RangeValue) => void;
+
+  /**
+   * 외부 래퍼 커스텀 클래스
+   *
+   * - `relative inline-block` 컨테이너에 추가로 붙는 클래스
+   */
   className?: string;
+
+  /**
+   * 캘린더 팝업이 열리는 방향
+   *
+   * - "top"    : 인풋 위쪽
+   * - "bottom" : 인풋 아래쪽 (기본)
+   * - "left"   : 인풋 왼쪽
+   * - "right"  : 인풋 오른쪽
+   */
   position?: Position;
+
+  /**
+   * Datepicker 및 캘린더의 크기
+   *
+   * - "sm" | "md" | "lg"
+   * - 인풋 높이 / 캘린더 전체 사이즈 / 날짜 셀 높이 등에 반영
+   */
   size?: Size;
+
+  /**
+   * 인풋 왼쪽에 캘린더 아이콘 표시 여부
+   *
+   * - true : lucide-react Calendar 아이콘 표시 (기본값)
+   * - false: 아이콘 없이 텍스트만 표시
+   */
+  showIcon?: boolean;
 }
 
 const months = [
@@ -58,10 +96,13 @@ const days = ["일", "월", "화", "수", "목", "금", "토"];
  * - 한 컴포넌트 안에서 시작일(start)과 종료일(end)을 선택
  * - 팝업 위치 조절 (top / bottom / left / right)
  * - 크기 조절 (sm / md / lg)
+ * - 인풋 왼쪽 캘린더 아이콘 옵션(showIcon)
  *
  * @example 기본 사용
  * ```tsx
- * <Datepicker
+ * const [range, setRange] = useState<RangeValue>({ start: null, end: null });
+ *
+ * <Calendar
  *   value={range}
  *   onChange={(v) => setRange(v)}
  * />
@@ -69,12 +110,17 @@ const days = ["일", "월", "화", "수", "목", "금", "토"];
  *
  * @example 위치 조절
  * ```tsx
- * <Datepicker position="top" />
+ * <Calendar position="top" />
  * ```
  *
  * @example 크기 조절
  * ```tsx
- * <Datepicker size="lg" />
+ * <Calendar size="lg" />
+ * ```
+ *
+ * @example 아이콘 숨기기
+ * ```tsx
+ * <Calendar showIcon={false} />
  * ```
  */
 const Calendar = ({
@@ -83,6 +129,7 @@ const Calendar = ({
   className = "",
   position = "bottom",
   size = "md",
+  showIcon = true,
 }: CalendarProps) => {
   const [open, setOpen] = useState(false);
 
@@ -266,9 +313,19 @@ const Calendar = ({
       <button
         type="button"
         onClick={handleToggleOpen}
-        className={`${sizeStyles.input} border px-3 rounded-md bg-white text-center hover:bg-gray-50 whitespace-nowrap`}
+        className={`
+          ${sizeStyles.input}
+          border px-3 rounded-md bg-white hover:bg-gray-50
+          flex items-center gap-2
+          text-sm text-gray-800
+        `}
       >
-        {displayText()}
+        {showIcon && (
+          <CalendarIcon className={`${sizeStyles.icon} text-gray-500`} />
+        )}
+        <span className="flex-1 text-center whitespace-nowrap">
+          {displayText()}
+        </span>
       </button>
 
       {/* Calendar */}

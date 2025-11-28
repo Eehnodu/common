@@ -39,7 +39,7 @@ const AdminLayout = () => {
       <main className="flex h-screen flex-1 flex-col min-w-0">
         <AdminHeader onToggleSidebar={handleToggleSidebar} />
         <section className="flex-1 px-4 py-5 min-h-0">
-          <div className="w-full h-full min-h-0">
+          <div className="w-full h-full min-h-0 overflow-y-auto">
             <Outlet />
           </div>
         </section>

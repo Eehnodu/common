@@ -15,8 +15,10 @@ import ModalPage from "./container/common/modal";
 import TablePage from "./container/common/table";
 import AlertPage from "./container/common/alert";
 import ToastPage from "./container/common/toast";
+import LoginPage from "./container/admin/login";
 import AdminLayout from "./container/admin/layout";
 import AdminMain from "./container/admin/main";
+import GptPage from "./container/admin/gpt";
 
 function App() {
   const queryClient = new QueryClient();
@@ -26,13 +28,14 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
-            {/* <Route
-            path="/admin"
-            element={<Navigate to="/admin/login" replace />}
-          />
-          <Route path="/admin/login" element={<AdminLogin />} /> */}
+            <Route
+              path="/admin"
+              element={<Navigate to="/admin/login" replace />}
+            />
+            <Route path="/admin/login" element={<LoginPage />} />
             <Route element={<AdminLayout />}>
               <Route path="/admin/link" element={<AdminMain />} />
+              <Route path="/admin/gpt" element={<GptPage />} />
             </Route>
             <Route path="/button" element={<ButtonPage />} />
             <Route path="/toggle" element={<TogglePage />} />

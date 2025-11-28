@@ -1,5 +1,11 @@
 // src/component/common/sideBar/adminMenu.ts
-import { FolderKanban, LucideIcon, Folder, Users } from "lucide-react";
+import {
+  FolderKanban,
+  LucideIcon,
+  Folder,
+  Users,
+  MessageCircle,
+} from "lucide-react";
 
 export interface BaseLinkItem {
   label: string;
@@ -26,6 +32,12 @@ export const ADMIN_MENU: AdminMenuItem[] = [
     label: "단일",
     icon: FolderKanban,
     to: "/admin/link",
+  },
+  {
+    type: "link",
+    label: "GPT",
+    icon: MessageCircle,
+    to: "/admin/gpt",
   },
   {
     type: "group",
