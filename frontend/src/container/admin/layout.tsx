@@ -1,7 +1,7 @@
 import { parseUserInfo, refreshExp } from "@/hooks/common/getCookie";
 import { useRefreshToken } from "@/hooks/common/useAPI";
 import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import AdminSidebar from "@/component/common/sideBar/sideBar";
 import AdminHeader from "@/component/common/header/header";
 
@@ -21,6 +21,10 @@ const AdminLayout = () => {
         .catch(() => {});
     }
   }, []);
+
+  if (!user && !isRefresh) {
+    return <Navigate to="/admin/login" />;
+  }
 
   const handleToggleSidebar = () => {
     setSidebarCollapsed((prev) => !prev);

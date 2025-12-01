@@ -4,6 +4,7 @@ import json
 from fastapi import Request, HTTPException
 from openai import AsyncOpenAI
 from app.core.config.settings import settings
+from app.core.utils.response import fail
 
 client = AsyncOpenAI(api_key=settings.openai_api_key)
 
@@ -15,7 +16,6 @@ class GPTService:
 
     async def gpt(self, request: Request):
         try:
-            print("들어옴")
             body = await request.json()
             prompt = body.get("prompt", "")
 
@@ -60,7 +60,7 @@ class GPTService:
             try:
                 config = json.loads(raw_text)
             except json.JSONDecodeError:
-                raise HTTPException(status_code=500, detail="Invalid chart config from GPT")
+                fail("Invalid chart config from GPT", "INVALID_CHART_CONFIG", 500)
 
             # 왼쪽에 보여줄 예쁜 코드 문자열 + 오른쪽에서 쓸 config 둘 다 리턴
             pretty_code = json.dumps(config, indent=2, ensure_ascii=False)
@@ -71,4 +71,4 @@ class GPTService:
             }
         except Exception as e:
             print("error", e)
-            raise HTTPException(status_code=500, detail="Internal server error")
+            fail("Internal server error", "INTERNAL_ERROR", 500)

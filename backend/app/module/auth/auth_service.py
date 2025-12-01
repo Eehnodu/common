@@ -1,11 +1,11 @@
 # app/module/auth/auth_service.py
 
-from fastapi import HTTPException
 from passlib.context import CryptContext
 
 from app.module.user.user_repository import UserRepository
 from app.module.admin.admin_repository import AdminRepository
 from app.module.auth.auth_token import AuthToken
+from app.core.utils.response import fail
 
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
@@ -28,7 +28,7 @@ class AuthService:
         
         original = await self.user_repo.get_user_by_id(user_id)
         if original:
-            raise HTTPException(status_code=400, detail="user already exists")
+            fail("user already exists", "USER_ALREADY_EXISTS", 400)
         else:
             hashed_password = hash_password(password)
             await self.user_repo.create_user(nickname, user_id, hashed_password)
@@ -44,9 +44,9 @@ class AuthService:
         elif type == "admin":
             user_obj = await self.admin_repo.get_admin_by_email(email)
         else:
-            raise HTTPException(status_code=400, detail="invalid type")
+            fail("invalid type", "INVALID_TYPE", 400)
         if not user_obj or not verify_password(password, user_obj.admin_password if type == "admin" else user_obj.user_password):
-            raise HTTPException(status_code=404, detail="user does not exists")
+            fail("user does not exists", "USER_DOES_NOT_EXISTS", 404)
 
         return user_obj, type
 

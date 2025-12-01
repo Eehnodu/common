@@ -7,6 +7,14 @@ export const baseURL =
     ? "http://localhost:8000"
     : "";
 
+// 공통 응답 타입
+export interface BaseResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+  errorCode: string;
+}
+
 /**
  * Refresh Token을 사용하여 세션을 갱신하는 훅
  *
@@ -32,7 +40,7 @@ export const useRefreshToken = (url: string = "api/auth/refresh_token") => {
       credentials: "include",
     });
 
-    // TODO: 로그인 안되어 있을 때 처리 
+    // TODO: 로그인 안되어 있을 때 처리
     if (response.status === 401) {
       // window.location.href ="/"
     }
@@ -64,7 +72,7 @@ export const useGet = <T>(
   key: (string | number)[],
   enabled: boolean = true,
   refresh_url: string = "api/auth/refresh_token",
-  fallback: string = "/",
+  fallback: string = "/"
 ) => {
   const refreshToken = useRefreshToken(refresh_url);
 
@@ -93,8 +101,13 @@ export const useGet = <T>(
         const text = await response.text();
         throw new Error(`API 오류 ${response.status}: ${text}`);
       }
-      const data = await response.json();
-      return data;
+      const json = (await response.json()) as BaseResponse<T>;
+
+      if (!json.success) {
+        throw new Error(json.message || "API Error");
+      }
+
+      return json.data;
     },
     placeholderData: keepPreviousData,
   });
@@ -138,7 +151,7 @@ export const usePost = <
 >(
   url: string,
   fallback: string = "/",
-  refresh_url: string = "api/auth/refresh_token",
+  refresh_url: string = "api/auth/refresh_token"
 ) => {
   const refreshToken = useRefreshToken(refresh_url);
 
@@ -195,7 +208,16 @@ export const usePost = <
         return null as unknown as TResponse;
       }
 
-      return (await response.json()) as TResponse;
+      const json = (await response.json()) as BaseResponse<TResponse>;
+
+      if (!json.success) {
+        throw {
+          status: response.status,
+          message: json.message || "API Error",
+        } as TError;
+      }
+
+      return json.data;
     },
   });
 };

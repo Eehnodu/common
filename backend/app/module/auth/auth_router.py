@@ -1,7 +1,7 @@
 # app/module/auth/auth_router.py
 
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import JSONResponse
+from app.core.utils.response import success
 
 from app.core.provider.endpoint import with_provider
 from app.core.provider.login import with_login
@@ -13,7 +13,7 @@ router = APIRouter()
 @with_provider
 async def login(p: ServiceProvider):
     user, type = await p.auth_service.login(p.request)
-    response = JSONResponse(status_code=200, content={"message": "user login successful"})
+    response = success(message="user login successful")
     await p.auth_service.token_util.create_jwt_token(user, response, type)
     return response
 
@@ -21,7 +21,7 @@ async def login(p: ServiceProvider):
 @with_provider
 @with_login
 async def logout(p:ServiceProvider):
-    response = JSONResponse(status_code=200, content={"message": "user logout successful"})
+    response = success(message="user logout successful")
     await p.auth_service.token_util.delete_token(response)
     return response
 
@@ -36,6 +36,6 @@ async def refresh_token(p: ServiceProvider):
     if not user:
         raise HTTPException(status_code=404, detail="user not found")
 
-    response = JSONResponse(status_code=200, content={"message": "user login successful"})
+    response = success(message="user login successful")
     await p.auth_service.token_util.create_jwt_token(user, response, type)
     return response
