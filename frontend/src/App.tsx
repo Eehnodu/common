@@ -19,6 +19,7 @@ import LoginPage from "./container/admin/login";
 import AdminLayout from "./container/admin/layout";
 import AdminMain from "./container/admin/main";
 import GptPage from "./container/admin/gpt";
+import CommonLayout from "./container/common/layout";
 
 function App() {
   const queryClient = new QueryClient();
@@ -37,20 +38,22 @@ function App() {
               <Route path="/admin/link" element={<AdminMain />} />
               <Route path="/admin/gpt" element={<GptPage />} />
             </Route>
-            <Route path="/button" element={<ButtonPage />} />
-            <Route path="/toggle" element={<TogglePage />} />
-            <Route path="/pagination" element={<PaginationPage />} />
-            <Route path="/calendar" element={<CalendarPage />} />
-            <Route path="/selectbox" element={<SelectBoxPage />} />
-            <Route path="/inputbox" element={<InputBoxPage />} />
-            <Route path="/textareabox" element={<TextareaBoxPage />} />
-            <Route path="/radiobutton" element={<RadioButtonPage />} />
-            <Route path="/checkbox" element={<CheckboxPage />} />
-            <Route path="/formmodal" element={<FormModalPage />} />
-            <Route path="/modal" element={<ModalPage />} />
-            <Route path="/table" element={<TablePage />} />
-            <Route path="/alert" element={<AlertPage />} />
-            <Route path="/toast" element={<ToastPage />} />
+            <Route path="/" element={<CommonLayout />}>
+              <Route path="/button" element={<ButtonPage />} />
+              <Route path="/toggle" element={<TogglePage />} />
+              <Route path="/pagination" element={<PaginationPage />} />
+              <Route path="/calendar" element={<CalendarPage />} />
+              <Route path="/selectbox" element={<SelectBoxPage />} />
+              <Route path="/inputbox" element={<InputBoxPage />} />
+              <Route path="/textareabox" element={<TextareaBoxPage />} />
+              <Route path="/radiobutton" element={<RadioButtonPage />} />
+              <Route path="/checkbox" element={<CheckboxPage />} />
+              <Route path="/formmodal" element={<FormModalPage />} />
+              <Route path="/modal" element={<ModalPage />} />
+              <Route path="/table" element={<TablePage />} />
+              <Route path="/alert" element={<AlertPage />} />
+              <Route path="/toast" element={<ToastPage />} />
+            </Route>
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>

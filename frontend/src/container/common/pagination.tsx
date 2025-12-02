@@ -14,7 +14,7 @@ const PaginationPage = () => {
       <section className="flex flex-col mx-auto gap-3 items-center justify-center border border-gray-400 rounded-md p-4">
         <h2 className="text-xl font-semibold">기본(Default)</h2>
         <div className="flex items-center gap-4">
-          <Pagination page={page1} total={10} onChange={(p) => setPage1(p)} />
+          <Pagination page={page1} total={60} onChange={(p) => setPage1(p)} />
         </div>
       </section>
 
@@ -28,7 +28,7 @@ const PaginationPage = () => {
             <Pagination
               size="sm"
               page={page2}
-              total={10}
+              total={60}
               onChange={(p) => setPage2(p)}
             />
           </div>
@@ -38,7 +38,7 @@ const PaginationPage = () => {
             <Pagination
               size="md"
               page={page3}
-              total={10}
+              total={60}
               onChange={(p) => setPage3(p)}
             />
           </div>

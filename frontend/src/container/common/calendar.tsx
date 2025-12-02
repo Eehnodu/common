@@ -65,12 +65,6 @@ const CalendarPage = () => {
             value={rangeDefault}
             onChange={(val) => setRangeDefault(val)}
           />
-
-          <div className="text-sm text-gray-700 whitespace-nowrap">
-            {`${formatDate(rangeDefault.start)} ~ ${formatDate(
-              rangeDefault.end
-            )}`}
-          </div>
         </div>
       </section>
 
