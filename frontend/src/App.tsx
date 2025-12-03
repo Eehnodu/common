@@ -20,6 +20,8 @@ import AdminLayout from "./container/admin/layout";
 import AdminMain from "./container/admin/main";
 import GptPage from "./container/admin/gpt";
 import CommonLayout from "./container/common/layout";
+import ArchitectureLayout from "./container/architecture/layout";
+import ArchitectureMain from "./container/architecture/main";
 
 function App() {
   const queryClient = new QueryClient();
@@ -53,6 +55,9 @@ function App() {
               <Route path="/table" element={<TablePage />} />
               <Route path="/alert" element={<AlertPage />} />
               <Route path="/toast" element={<ToastPage />} />
+            </Route>
+            <Route element={<ArchitectureLayout />}>
+              <Route path="/architecture" element={<ArchitectureMain />} />
             </Route>
           </Routes>
         </BrowserRouter>
