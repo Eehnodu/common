@@ -13,7 +13,7 @@ const ButtonPage = () => {
     <div className="flex flex-col gap-1 items-start mt-2">
       <div className="text-base text-black">{rowLabel}</div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center">
         {sizes.map((size) => {
           const leftIcon =
             iconType === "left" || iconType === "both" ? (

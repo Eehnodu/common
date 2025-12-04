@@ -1,8 +1,11 @@
-import { ButtonHTMLAttributes, ReactNode } from "react";
+import {
+  ButtonHTMLAttributes,
+  ReactNode,
+  ReactElement,
+  cloneElement,
+  isValidElement,
+} from "react";
 
-/**
- * Button 컴포넌트에서 사용할 속성 타입
- */
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   variant?: "main" | "sub1" | "sub2";
@@ -13,9 +16,6 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
 }
 
-/**
- * 재사용 가능한 기본 Button 컴포넌트
- */
 const Button = ({
   children,
   variant = "main",
@@ -52,6 +52,29 @@ const Button = ({
     lg: "px-5 py-2.5 text-lg gap-2.5",
   };
 
+  // ✅ 버튼 size에 따라 아이콘 크기 클래스
+  const iconSizeClassMap: Record<NonNullable<ButtonProps["size"]>, string> = {
+    sm: "w-4 h-4", // 16px
+    md: "w-5 h-5", // 20px
+    lg: "w-6 h-6", // 24px
+  };
+
+  const iconSizeClass = iconSizeClassMap[size];
+
+  const renderIcon = (icon: ReactNode) => {
+    if (!icon || !isValidElement(icon)) return null;
+
+    const element = icon as ReactElement<{ className?: string }>;
+    const mergedClassName = [iconSizeClass, element.props.className]
+      .filter(Boolean)
+      .join(" ");
+
+    // 기존 아이콘에 className이 있어도 합쳐서 넘겨줌
+    return cloneElement(element, {
+      className: mergedClassName,
+    });
+  };
+
   return (
     <button
       disabled={disabled}
@@ -65,9 +88,13 @@ const Button = ({
       `}
       {...props}
     >
-      {leftIcon && <span className="flex items-center">{leftIcon}</span>}
+      {leftIcon && (
+        <span className="flex items-center">{renderIcon(leftIcon)}</span>
+      )}
       {children}
-      {rightIcon && <span className="flex items-center">{rightIcon}</span>}
+      {rightIcon && (
+        <span className="flex items-center">{renderIcon(rightIcon)}</span>
+      )}
     </button>
   );
 };
